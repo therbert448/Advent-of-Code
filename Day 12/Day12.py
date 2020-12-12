@@ -14,6 +14,10 @@ def formatdata(inputs):
         instructs.append([direct, value])
     return
 
+def add_vector(p, xy, val):
+    p += xy * val
+    return p
+
 def go():
     face = "E"
     com = compass.index(face)
@@ -21,9 +25,10 @@ def go():
     for command in instructs:
         d = command[0]
         val = command[1]
+        f = lambda p, xy: add_vector(p, xy, val)
         if d in xydict:
             vec = xydict[d]
-            pos = list(map(lambda p, xy: p+(val*xy), pos, vec))
+            pos = list(map(f, pos, vec))
         elif d in turn:
             val = val//90
             if d == "L":
@@ -32,7 +37,7 @@ def go():
             face = compass[com]
         elif d == "F":
             vec = xydict[face]
-            pos = list(map(lambda p, xy: p+(val*xy), pos, vec))
+            pos = list(map(f, pos, vec))
         else:
             print("Error with input")
             return 0
@@ -64,16 +69,17 @@ def go2():
     for command in instructs:
         d = command[0]
         val = command[1]
+        f = lambda p, xy: add_vector(p, xy, val)
         if d in xydict:
             addvec = xydict[d]
-            vec = list(map(lambda v, xy: v+(val*xy), vec, addvec))
+            vec = list(map(f, vec, addvec))
         elif d in turn:
-            val = val//90
+            val = val//90 % 4
             if d == "L":
                 val = 4 - val
             vec = turn_vector(vec, val)
         elif d == "F":
-            pos = list(map(lambda p, v: p+(val*v), pos, vec))
+            pos = list(map(f, pos, vec))
         else:
             print("Error with input")
             return 0
