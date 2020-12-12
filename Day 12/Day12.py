@@ -1,5 +1,5 @@
 
-def open_file(day):
+def open_file():
     file = open("Day" + str(day) + "inputs.txt")
     inputs = file.readlines()
     file.close()
@@ -15,28 +15,29 @@ def formatdata(inputs):
     return
 
 def go():
-    facing = "E"
-    com = compass.index(facing)
+    face = "E"
+    com = compass.index(face)
     pos = [0, 0]
     for command in instructs:
-        direct = command[0]
-        value = command[1]
-        if direct in xydict:
-            pos[0] += value * xydict[direct][0]
-            pos[1] += value * xydict[direct][1]
-        elif direct in turn:
-            value = int(value/90)
-            if direct == "L":
-                value *= -1
-            com = (com + value) % 4
-            facing = compass[com]
-        elif direct == "F":
-            pos[0] += value * xydict[facing][0]
-            pos[1] += value * xydict[facing][1]
+        d = command[0]
+        val = command[1]
+        if d in xydict:
+            vec = xydict[d]
+            pos = list(map(lambda p, xy: p+(val*xy), pos, vec))
+        elif d in turn:
+            val = val//90
+            if d == "L":
+                val *= -1
+            com = (com + val) % 4
+            face = compass[com]
+        elif d == "F":
+            vec = xydict[face]
+            pos = list(map(lambda p, xy: p+(val*xy), pos, vec))
         else:
             print("Error with input")
             return 0
-    dist = sum(abs(a) for a in pos)            
+    
+    dist = sum(abs(coord) for coord in pos)            
     return dist
 
 def turn_vector(vector, turns):
@@ -60,33 +61,31 @@ def turn_vector(vector, turns):
     return vector
             
 def go2():
-    vector = [10, 1]
+    vec = [10, 1]
     pos = [0, 0]
-    
+    i = 0
     for command in instructs:
-        direct = command[0]
-        value = command[1]
-        if direct in xydict:
-            vector[0] += value * xydict[direct][0]
-            vector[1] += value * xydict[direct][1]
-        elif direct in turn:
-            value = int(value/90)
-            if direct == "L":
-                value = 4 - value
-            vector = turn_vector(vector, value)
-        elif direct == "F":
-            pos[0] += value * vector[0]
-            pos[1] += value * vector[1]
+        d = command[0]
+        val = command[1]
+        if d in xydict:
+            addvec = xydict[d]
+            vec = list(map(lambda v, xy: v+(val*xy), vec, addvec))
+        elif d in turn:
+            val = int(val/90)
+            if d == "L":
+                val = 4 - val
+            vec = turn_vector(vec, val)
+        elif d == "F":
+            pos = list(map(lambda p, v: p+(val*v), pos, vec))
         else:
             print("Error with input")
             return 0
 
-    dist = sum(abs(a) for a in pos)            
+    dist = sum(abs(coord) for coord in pos)            
     return dist
     
-
 day = 12
-inputs = open_file(day)
+inputs = open_file()
 
 formatdata(inputs)
 
