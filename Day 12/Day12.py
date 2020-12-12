@@ -41,20 +41,17 @@ def go():
     return dist
 
 def turn_vector(vector, turns):
+    x = vector[0]
+    y = vector[1]
     if turns == 0:
         print("Turning 0 degrees?")
         return vector
     elif turns == 2:
-        for i in range(len(vector)):
-            vector[i] *= -1
+        vector = [-v for v in vector]
     elif turns == 1:
-        newx = vector[1]
-        newy = vector[0] * -1
-        vector = [newx, newy]
+        vector = [y, -x]
     elif turns == 3:
-        newx = vector[1] * -1
-        newy = vector[0]
-        vector = [newx, newy]
+        vector = [-y, x]
     else:
         print("Turns must be integer number")
         return vector
@@ -71,7 +68,7 @@ def go2():
             addvec = xydict[d]
             vec = list(map(lambda v, xy: v+(val*xy), vec, addvec))
         elif d in turn:
-            val = int(val/90)
+            val = val//90
             if d == "L":
                 val = 4 - val
             vec = turn_vector(vec, val)
@@ -95,9 +92,3 @@ turn = ["R", "L"]
 
 print(go())
 print(go2())
-
-
-
-
-
-
