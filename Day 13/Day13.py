@@ -5,10 +5,10 @@ def open_file():
     return inputs
 
 def formatdata(inputs):
-    global time
+    global t0
     global buses
     global allbuses
-    time = int(inputs[0])
+    t0 = int(inputs[0])
     buses = inputs[1].split(",")
     allbuses = []
     for b in buses:
@@ -20,19 +20,19 @@ def formatdata(inputs):
     
     return
 
-def bus_time(bus, time):
+def bus_time(bus, t):
     b = bus
-    while bus < time:
+    while bus < t:
         bus += b
     return bus
 
 def next_bus():
     times = []
     for bus in buses:
-        t = bus_time(bus, time)
+        t = bus_time(bus, t0)
         times.append(t)
     tbus = min(times)
-    wait = tbus - time
+    wait = tbus - t0
     nextbus = buses[times.index(tbus)]
     answer = wait * nextbus
     return answer
@@ -47,12 +47,11 @@ def bus_sequence():
             bus = allbuses[i] * (j+1)
             rem = bus % firstbus
             if rem == i % firstbus:
-                time = bus
-                while time < i:
-                    time += allbuses[i] * firstbus
-                t.append(time - i)
+                tbus = bus
+                while tbus < i:
+                    tbus += allbuses[i] * firstbus
+                t.append(tbus - i)
                 break
-            
     addwait = max(buses) * firstbus
     maxt = max(t)
     for j in range(len(t)):
