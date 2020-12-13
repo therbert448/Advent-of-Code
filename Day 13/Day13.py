@@ -64,7 +64,7 @@ def bus_sequence():
             maxt += addwait
             dif = maxt - t[j]
             rem = dif % mod
-        if j != idxmax:
+        if addwait % buses[j+1] != 0:
             addwait *= buses[j+1]
     
     return maxt
