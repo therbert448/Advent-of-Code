@@ -47,10 +47,10 @@ def bus_sequence():
             bus = allbuses[i] * (j+1)
             rem = bus % firstbus
             if rem == i % firstbus:
-                mult = bus
-                while mult < i:
-                    mult += allbuses[i] * firstbus
-                t.append(mult - i)
+                time = bus
+                while time < i:
+                    time += allbuses[i] * firstbus
+                t.append(time - i)
                 break
             
     addwait = max(buses) * firstbus
