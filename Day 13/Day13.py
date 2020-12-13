@@ -55,7 +55,6 @@ def bus_sequence():
             
     addwait = max(buses) * firstbus
     maxt = max(t)
-    idxmax = t.index(maxt)
     for j in range(len(t)):
         dif = maxt - t[j]
         mod = buses[j+1] * firstbus
