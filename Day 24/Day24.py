@@ -32,9 +32,10 @@ def find_tile(): #follow each line of instructions and flip the tile
         for d in directions:
             counts[d] = tile.count(d)
         ew = counts["e"] - counts["w"]
-        nesw = counts["ne"] - counts["sw"]
-        nwse = counts["nw"] - counts["se"]
-        directs = [ew, nesw, nwse]
+        #A step east then a step west leaves you at the starting position
+        nesw = counts["ne"] - counts["sw"] #Same for ne and sw
+        nwse = counts["nw"] - counts["se"] #And for nw and se
+        directs = [ew, nesw, nwse] #number of steps in each direction
         for i, d in enumerate(compass.keys()):
             pos = move_in_dir(pos, d, directs[i])
         if pos in flipcount:
@@ -107,9 +108,9 @@ formatdata()
 directions = ["e", "ne", "nw", "w", "sw", "se"] #all 6 directions
 
 compass = {"e": (1, 0), "ne": (0, 1), "nw": (-1, 1)} #3 axes of directions
-#coordinate system defined as "x axis" along west to east, "y axis" along
-#south west to north east.
-#Only need to know relative coordinates, not absolute locations.
+#The "x" coordinate is the number of steps east (negative means west)
+#The "y" coordinate is the number of steps north east (opposite is south west)
+#A step north west is equivalent to a step west, then a step north east
 
 count_black() #run part one
 bdict = one_hundred_days() #run part two
