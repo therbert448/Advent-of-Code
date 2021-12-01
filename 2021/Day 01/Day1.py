@@ -11,7 +11,7 @@ def open_file():
     file.close()
     return inputs
 
-def formatdata():
+def format_data():
     global depths
     depths = [int(line.strip()) for line in inputs]
 
@@ -20,14 +20,13 @@ def part_one():
     print(f"Part One = {count}")
 
 def part_two():
-    rolling = [sum(depths[i:i+3]) for i in range(len(depths)-2)]
-    count = sum([1 for i in range(1, len(rolling)) if rolling[i]>rolling[i-1]])
+    count = sum([1 for i in range(3, len(depths)) if depths[i]>depths[i-3]])
     print(f"Part Two = {count}")
 
 day = 1
 inputs = open_file()
 
-formatdata()
+format_data()
 
 part_one()
 part_two()
