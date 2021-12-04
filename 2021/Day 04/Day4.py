@@ -55,6 +55,8 @@ def part_one():
     print(f"Part One = {score}")
 
 def part_two():
+    global marked
+    marked = [[0 for i in range(len(board))] for board in boards]
     for num in called:
         mark_board(num)
         bingo = True
