@@ -13,7 +13,7 @@ def open_file():
 
 def format_data():
     global lines
-    lines = [[tuple([int(v) for v in p.split(",")]) for p in l] for l in inputs]
+    lines = [[[int(v) for v in p.split(",")] for p in l] for l in inputs]
 
 def add_non_diag(line):
     start, end = line
