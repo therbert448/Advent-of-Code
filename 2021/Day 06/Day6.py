@@ -18,12 +18,9 @@ def format_data():
         school[i] = sum([1 for timer in inputs if timer == i])
 
 def new_day(school):
-    newSchool = {k-1: v for k, v in school.items()}
-    if -1 in newSchool:
-        new = newSchool[-1]
-        newSchool[8] = new
-        newSchool[6] += new
-        newSchool.pop(-1)
+    newSchool = {(k-1)%9: v for k, v in school.items()}
+    if 8 in newSchool:
+        newSchool[6] += newSchool[8]
     return newSchool
 
 def part_one():
