@@ -16,9 +16,8 @@ def format_data():
     signals = [[inOut.strip().split() for inOut in line] for line in inputs]
 
 def part_one():
-    count = 0
-    for line in signals:
-        count += sum([1 for output in line[1] if len(output) in (2, 3, 4, 7)])
+    unique = (2, 3, 4, 7)
+    count = sum([sum([1 for s in l[1] if len(s) in unique]) for l in signals])
     print(f"Part One = {count}")
         
 def part_two():
