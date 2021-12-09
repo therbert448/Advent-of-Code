@@ -32,7 +32,7 @@ def neighbours(pos):
     return neighs
 
 def add_pos(pos, basin):
-    checked[pos] = grid[pos] #don't actually need the value, just the key
+    checked.add(pos)
     basin.append(pos)
     neighs = neighbours(pos)
     for n, val in neighs.items():
@@ -51,7 +51,7 @@ def part_one():
 
 def part_two():
     global checked
-    checked = {} #dict because easier to check keys than coords in a list
+    checked = set()
     basins = [] #collect length of each basin
     for pos, val in grid.items():
         if pos in checked or val == 9:
