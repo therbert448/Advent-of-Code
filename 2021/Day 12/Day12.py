@@ -7,7 +7,6 @@ Advent of Code
 
 def open_file():
     file = open("Day" + str(day) + "inputs.txt")
-    #file= open("test3.txt")
     inputs = file.readlines()
     file.close()
     return inputs
