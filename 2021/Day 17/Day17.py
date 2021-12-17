@@ -25,8 +25,6 @@ def part_two():
         for y in range(ymin, abs(ymin)):
             if n < y:
                 dispy = y*(y+1)//2 - (y-n)*(y-n+1)//2
-            elif n == y:
-                dispy = y*(y+1)//2
             else:
                 dispy = y*(y+1)//2 - (n-y-1)*(n-y)//2
             if dispy < ymin or dispy > ymax:
