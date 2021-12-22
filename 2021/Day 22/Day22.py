@@ -3,6 +3,23 @@ Advent of Code
 2021 Day 22
 
 @author: Tom Herbert
+
+Reactor Reboot:
+    This puzzle involves turning on and off cubes in a "reactor core" 3D grid
+    List of steps to be done in order, turning on or off a volume of cubes
+    Best way to look at this is to consider Venn Diagrams
+    If two circles overlap, then adding the area of the circles will count the
+    intersection twice. If three overlap, then the area where all three 
+    intersect will be counted thrice.
+    Treat intersections as a cube to be subtracted from a parent cube.
+    If a new intersection overlaps the parent and the subtracted cube, add a 
+    new intersection cube to the parent cube and also add an intersection cube
+    to the subtracted cube.
+    Subtracting the new intersection from the subtracted cube effectively turns
+    the intersection back on. This is then turned off again by subtracting the
+    full intersection from the parent.
+    Save on cubes, to subtract intersections and calculate volumes later.
+    Off cubes can be discarded after all intersections are found
 """
 
 class Cube:
@@ -35,11 +52,8 @@ class Cube:
         bounds = self.intersection(other)
         if bounds:
             for cube in self.offCubes:
-                #if new cube intersects with a previous intersection
                 cube.remove_intersection(other)
-                #keep track of additional intersections
             self.offCubes.append(Cube(bounds, self.minD, self.maxD))
-            #add cube object to keep track of all intersections
     
     def calculate_volume(self):
         volume = 1
@@ -74,16 +88,8 @@ def part_one():
         if newCube.inRange:
             for cube in cubes:
                 cube.remove_intersection(newCube)
-                #if next step intersects with a previous cube
-                #even if new cube is on or off
-                #remove the intersection from the previous cube
-                #if new cube on, intersection will be counted in new cube
-                #if new cube off, previous cube should remove intersection
             if onOff == "on":
                 cubes.append(newCube)
-                #if new cube on, remove any sections of previous cubes where
-                #they intersect, and count that removed section as part of this
-                #new cube
     answer = sum([cube.calculate_volume() for cube in cubes])
     print(f"Part One = {answer}")
 
