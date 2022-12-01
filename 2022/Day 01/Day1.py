@@ -6,6 +6,6 @@ Advent of Code
 """
 
 with open("Day1inputs.txt") as file:
-    elves = sorted([sum([int(v) for v in l.strip().split()]) for l in file.read().split("\n\n")])
-    print(f"Part One = {max(elves)}")
-    print(f"Part Two = {sum(elves[-3:])}")
+    elves = sorted([sum(map(int, l.strip().split())) for l in file.read().split("\n\n")])
+print(f"Part One = {max(elves)}")
+print(f"Part Two = {sum(elves[-3:])}")
