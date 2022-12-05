@@ -18,8 +18,7 @@ def format_data():
     stacks = []
     a, b = [block.splitlines() for block in inputs]
     for line in a[::-1]:
-        for i in range((len(line)+1)//4):
-            char = line[i*4 + 1]
+        for i, char in enumerate(line[1::4]):
             if char.isnumeric():
                 stacks.append([])
             elif char.isupper():
@@ -40,10 +39,8 @@ def part_two():
     newStacks = [[element for element in line] for line in stacks]
     for line in instructions:
         num, off, on = line
-        moving = []
-        for _ in range(num):
-            moving.insert(0, newStacks[off-1].pop())
-        newStacks[on-1].extend(moving)
+        for i in range(num, 0, -1):
+            newStacks[on-1].append(newStacks[off-1].pop(-i))
     result = "".join(stack[-1] for stack in newStacks)
     print(f"Part Two = {result}")
 
