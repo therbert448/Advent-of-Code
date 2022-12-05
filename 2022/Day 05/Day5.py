@@ -33,9 +33,7 @@ def part_one():
         num, off, on = line
         for _ in range(num):
             newStacks[on-1].append(newStacks[off-1].pop())
-    result = ""
-    for i in range(len(newStacks)):
-        result += newStacks[i][-1]
+    result = "".join(stack[-1] for stack in newStacks)
     print(f"Part One = {result}")
 
 def part_two():
@@ -46,11 +44,8 @@ def part_two():
         for _ in range(num):
             moving.insert(0, newStacks[off-1].pop())
         newStacks[on-1].extend(moving)
-    result = ""
-    for i in range(len(newStacks)):
-        result += newStacks[i][-1]
+    result = "".join(stack[-1] for stack in newStacks)
     print(f"Part Two = {result}")
-    pass
 
 inputs = open_file()
 
