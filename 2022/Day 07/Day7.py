@@ -10,6 +10,7 @@ day = 7
 class Directory:
     def __init__(self, currentPath):
         self.path = "/".join(currentPath)
+        self.total = 0
     
     def add_files(self, files):
         self.files = {name: size for [size, name] in files}
@@ -18,6 +19,8 @@ class Directory:
         self.dirs = ["/".join([self.path, name]) for name in dirs]
     
     def find_size(self):
+        if self.total:
+            return self.total
         fileSizes = sum(self.files.values())
         dirSizes = sum(directories[dire].find_size() for dire in self.dirs)
         self.total = fileSizes + dirSizes
