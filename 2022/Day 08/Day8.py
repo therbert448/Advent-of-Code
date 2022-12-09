@@ -44,7 +44,7 @@ def scenic_score():
             maxScores = [w, width - w - 1, l, length - l - 1]
             left = inputs[l][w-1::-1]
             right = inputs[l][w+1:]
-            top = [inputs[i][w] for i in range(l-1, 0 ,-1)]
+            top = [inputs[i][w] for i in range(l-1, -1 ,-1)]
             bottom = [inputs[i][w] for i in range(l+1, length)]
             slices = [left, right, top, bottom]
             score = 1
