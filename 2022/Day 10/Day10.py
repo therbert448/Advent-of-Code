@@ -23,8 +23,7 @@ def print_grid():
                 line += "#"
             else:
                 line += " "
-        line += "\n"
-        stringOut += line
+        stringOut += line + "\n"
     print(stringOut)
 
 def CRT():
