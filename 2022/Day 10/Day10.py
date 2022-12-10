@@ -40,8 +40,7 @@ def CRT():
             if cycle % 40 == 20:
                 strength += cycle * x
             if i == 1:
-                val = int(v)
-                x += val
+                x += int(v)
     print(f"Part One = {strength}")
     print("Part Two =")
     print_grid()
