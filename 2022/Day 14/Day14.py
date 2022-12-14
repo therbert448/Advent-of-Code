@@ -113,7 +113,6 @@ solution.
 Instead of finding all the inaccessible tiles, work down from (500, 0) to find
 all the tiles that must have sand in them for (500, 0) to be blocked
 """
-
 def filled_tiles(ylimit):
     filled = {(500, 0)}
     for y in range(ylimit):
