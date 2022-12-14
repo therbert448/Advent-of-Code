@@ -29,16 +29,16 @@ def format_data():
 
 def move_sand(current):
     d, dl, dr = [tuple(map(add, current, move)) for move in moves]
-    if d not in rocks and d not in sand and d[1] != ymax + 2:
+    if d not in rocks and d not in sand:
         return d
-    elif dl not in rocks and dl not in sand and dl[1] != ymax + 2:
+    elif dl not in rocks and dl not in sand:
         return dl
-    elif dr not in rocks and dr not in sand and dr[1] != ymax + 2:
+    elif dr not in rocks and dr not in sand:
         return dr
     else:
         return current
 
-def add_sand(partTwo = False):
+def add_sand():
     current = (500, 0)
     if current in sand:
         return True
@@ -47,72 +47,12 @@ def add_sand(partTwo = False):
         if nextPos == current:
             break
         x, y = nextPos
-        if (x < xmin or x > xmax or y >= ymax) and not partTwo:
+        if (x < xmin or x > xmax or y >= ymax):
             return True
         current = nextPos
     sand.add(current)
     return False
 
-def part_one():
-    global sand
-    sand = set()
-    overflowing = False
-    count = 0
-    while not overflowing:
-        overflowing = add_sand()
-        if not overflowing:
-            count +=1
-    print(f"Part One = {len(sand)}")
-
-"""
-Generic solution to Part Two using the code from Part One.
-I initially got the answer using the shortcut below, which runs much faster.
-I wrote this in for completeness as a solution that will work for all possible
-inputs.
-"""
-def part_two(): 
-    global sand
-    sand = set()
-    overflowing = False
-    count = 0
-    while not overflowing:
-        overflowing = add_sand(True)
-        if not overflowing:
-            count += 1
-    print(f"Part Two = {len(sand)}")
-
-"""
-My initial solution, which is conveniently a shortcut, at least for my inputs
-This calculates the maximum space the sand could occupy in part 2, which is a 
-triangle of height ymax+2 and width 2(ymax+1)+1 and area = (ymax+2)^2, then 
-subtracts all the rocks and any tile that would be impossible for sand to ever 
-occupy.
-This is not a generic solution and may not work for all inputs.
-"""
-def blocked_tiles(ylimit):
-    blocked = set(rocks)
-    for y in range(ylimit):
-        for x in range(500 - y, 500 + y + 1):
-            coords = (x, y)
-            if coords in blocked:
-                continue
-            above = set([tuple(map(add, coords, up)) for up in upper])
-            if all([a in blocked for a in above]):
-                blocked.add(coords)
-    return blocked
-
-def part_two_fast():
-    ylimit = ymax+2
-    totalTiles = ylimit ** 2
-    blocked = blocked_tiles(ylimit)
-    print(f"Part Two = {totalTiles - len(blocked)}")
-
-"""
-A better, more complete and generic version of the shortcut from my initial 
-solution.
-Instead of finding all the inaccessible tiles, work down from (500, 0) to find
-all the tiles that must have sand in them for (500, 0) to be blocked
-"""
 def filled_tiles(ylimit):
     filled = {(500, 0)}
     for y in range(ylimit):
@@ -125,9 +65,19 @@ def filled_tiles(ylimit):
                 filled.add(coords)
     return filled
 
-def part_two_fast_better():
-    ylimit = ymax+2
-    filled = filled_tiles(ylimit)
+def part_one():
+    global sand
+    sand = set()
+    overflowing = False
+    count = 0
+    while not overflowing:
+        overflowing = add_sand()
+        if not overflowing:
+            count +=1
+    print(f"Part One = {len(sand)}")
+
+def part_two():
+    filled = filled_tiles(ymax+2)
     print(f"Part Two = {len(filled)}")
 
 inputs = open_file()
@@ -139,6 +89,4 @@ upper = [(0, -1), (1, -1), (-1, -1)]
 add = lambda a, b: a+b
 
 part_one()
-#part_two()
-#part_two_fast()
-part_two_fast_better()
+part_two()
