@@ -82,7 +82,7 @@ def part_two():
     print(f"Part Two = {len(sand)}")
 
 """
-Shortcut solution for my given input
+My initial solution, which is conveniently a shortcut, at least for my inputs
 This calculates the maximum space the sand could occupy in part 2, which is a 
 triangle of height ymax+2 and width 2(ymax+1)+1 and area = (ymax+2)^2, then 
 subtracts all the rocks and any tile that would be impossible for sand to ever 
@@ -107,6 +107,30 @@ def part_two_fast():
     blocked = blocked_tiles(ylimit)
     print(f"Part Two = {totalTiles - len(blocked)}")
 
+"""
+A better, more complete and generic version of the shortcut from my initial 
+solution.
+Instead of finding all the inaccessible tiles, work down from (500, 0) to find
+all the tiles that must have sand in them for (500, 0) to be blocked
+"""
+
+def filled_tiles(ylimit):
+    filled = {(500, 0)}
+    for y in range(ylimit):
+        for x in range(500 - y, 500 + y + 1):
+            coords = (x, y)
+            if coords in rocks:
+                continue
+            above = set([tuple(map(add, coords, up)) for up in upper])
+            if any([a in filled for a in above]):
+                filled.add(coords)
+    return filled
+
+def part_two_fast_better():
+    ylimit = ymax+2
+    filled = filled_tiles(ylimit)
+    print(f"Part Two = {len(filled)}")
+
 inputs = open_file()
 
 format_data()
@@ -116,5 +140,6 @@ upper = [(0, -1), (1, -1), (-1, -1)]
 add = lambda a, b: a+b
 
 part_one()
-part_two()
-part_two_fast()
+#part_two()
+#part_two_fast()
+part_two_fast_better()
