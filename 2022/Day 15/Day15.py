@@ -3,7 +3,28 @@ Advent of Code
 2022 Day 15
 
 @author: Tom Herbert
-Part Two Fast
+
+Reworked from original solution with a different method. This version of Part
+Two is much faster, taking less than a second, compared to nearly a minute 
+before.
+
+Previous solution from Part Two utilised the logic of Part One, but instead of
+finding the "no beacon" zone(s) for a given line, it returned the "possible 
+beacon" zone for each line. If such a zone existed for any row, that was the 
+answer.
+This was inefficient because it still had to iterate down each of the 4,000,000
+rows until an answer was found.
+
+This new solution doesn't have to consider the 4,000,000 x 4,000,000 grid, 
+except to enforce limits. Instead it looks at the perimeter of each sensor's 
+"no beacon" zone.
+It draws a line over each of the 4 outside edges of the "no beacon" zone for 
+each sensor, then finds all the points where the lines of any sensor intersect 
+with the lines of any other sensor. If any of these points are outside the grid, 
+they are discarded.
+The points remaining are then checked against every sensor, making sure they 
+aren't positioned in any "no beacon" zones. The first intersection point that
+is in the grid and isn't in any "no beacon" zone is the answer.
 """
 
 day = 15
@@ -77,7 +98,6 @@ def y_intercepts():
     
 def intersections(lim):
     y_intercepts()
-    interSet = set()
     for i, sensor in enumerate(intercepts):
         a, b, c, d  = sensor
         down1, up1 = [a, b], [c, d]
@@ -93,18 +113,14 @@ def intersections(lim):
                         x = up - y
                         if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
                             continue
-                        interSet.add((x, y))
-        
-    for coords in interSet:
-        x, y = coords
-        answer = True
-        for sensor in sensors:
-            sx, sy, _, _, distance = sensor
-            if abs(sx - x) + abs(sy - y) <= distance:
-                answer = False
-                break
-        if answer:
-            return (x, y)
+                        answer = True
+                        for sensor in sensors:
+                            sx, sy, _, _, distance = sensor
+                            if abs(sx - x) + abs(sy - y) <= distance:
+                                answer = False
+                                break
+                        if answer:
+                            return (x, y)
 
 def part_one():
     global ranges
