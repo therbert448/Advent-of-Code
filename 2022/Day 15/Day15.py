@@ -3,15 +3,13 @@ Advent of Code
 2022 Day 15
 
 @author: Tom Herbert
+Part Two Fast
 """
-
-import time
 
 day = 15
 
 def open_file():
     filename = "Day" + str(day) + "inputs.txt"
-    #filename = "test.txt"
     with open(filename) as file:
         inputs = [line.strip().split() for line in file.readlines()]
     return inputs
@@ -48,31 +46,6 @@ def check_row(row):
                 continue
         ranges.append(xrange)
 
-def check_possible(row, xlims):
-    possible = [xlims]
-    for sensor in sensors:
-        sx, sy, bx, by, distance = sensor
-        if sy - distance > row or sy + distance < row:
-            continue
-        xwidth = distance - abs(sy - row)
-        if sx - xwidth <= xlims[0] and sx + xwidth >= xlims[1]:
-            return []
-        xrange = [max(xlims[0], sx - xwidth), min(xlims[1], sx + xwidth)]
-        newPossible = []
-        for lims in possible:
-            if lims[0] >= xrange[0] and lims[1] <= xrange[1]:
-                continue
-            if lims[0] < xrange[0] <= lims[1]:
-                newPossible.append([lims[0], xrange[0]-1])
-            if lims[0] <= xrange[1] < lims[1]:
-                newPossible.append([xrange[1]+1, lims[1]])
-            if max(lims) < min(xrange) or min(lims) > max(xrange):
-                newPossible.append(lims)
-        possible = list(newPossible)
-        if not possible:
-            return possible
-    return possible
-
 def sort_ranges():
     newRanges = []
     current = 0
@@ -91,6 +64,51 @@ def sort_ranges():
     newRanges.append(minMax)
     return newRanges
 
+def y_intercepts():
+    global intercepts
+    intercepts = []
+    for sensor in sensors:
+        sx, sy, _, _, distance = sensor
+        a = sy - sx - distance - 1
+        b = sy - sx + distance + 1
+        c = sy + sx - distance - 1
+        d = sy + sx + distance + 1
+        intercepts.append([a, b, c, d])
+    
+def intersections(lim):
+    y_intercepts()
+    interSet = set()
+    for i, sensor in enumerate(intercepts):
+        a, b, c, d  = sensor
+        down1, up1 = [a, b], [c, d]
+        for other in intercepts[i+1:]:
+            e, f, g, h  = other
+            down2, up2 = [e, f], [g, h]
+            for up in up1:
+                for down in down2:
+                    y = (up + down)//2
+                    x = up - y
+                    if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
+                        continue
+                    interSet.add((x, y))
+            for up in up2:
+                for down in down1:
+                    y = (up + down)//2
+                    x = up - y
+                    if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
+                        continue
+                    interSet.add((x, y))
+    for coords in interSet:
+        x, y = coords
+        answer = True
+        for sensor in sensors:
+            sx, sy, _, _, distance = sensor
+            if abs(sx - x) + abs(sy - y) <= distance:
+                answer = False
+                continue
+        if answer:
+            return (x, y)
+
 def part_one():
     global ranges
     ranges = []
@@ -103,14 +121,8 @@ def part_one():
 
 def part_two():
     N = 4_000_000
-    xlims = [0, N]
-    for y in range(N+1):
-        possible = check_possible(y, xlims)
-        if not possible:
-            continue
-        else:
-            x = possible[0][0]
-            break
+    lim = [0, N]
+    x, y = intersections(lim)
     result = x * N + y
     print(f"Part Two = {result}")
 
@@ -119,8 +131,4 @@ inputs = open_file()
 format_data()
 
 part_one()
-start = time.perf_counter()
 part_two()
-end = time.perf_counter()
-
-print(f"Part Two took {end-start} seconds")
