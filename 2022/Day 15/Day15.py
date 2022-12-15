@@ -84,20 +84,17 @@ def intersections(lim):
         for other in intercepts[i+1:]:
             e, f, g, h  = other
             down2, up2 = [e, f], [g, h]
-            for up in up1:
-                for down in down2:
-                    y = (up + down)//2
-                    x = up - y
-                    if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
-                        continue
-                    interSet.add((x, y))
-            for up in up2:
-                for down in down1:
-                    y = (up + down)//2
-                    x = up - y
-                    if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
-                        continue
-                    interSet.add((x, y))
+            ups = [up1, up2]
+            downs = [down1, down2]
+            for j in range(2):
+                for up in ups[j]:
+                    for down in downs[1-j]:
+                        y = (up + down)//2
+                        x = up - y
+                        if x < lim[0] or x > lim[1] or y < lim[0] or y > lim[1]:
+                            continue
+                        interSet.add((x, y))
+        
     for coords in interSet:
         x, y = coords
         answer = True
@@ -105,7 +102,7 @@ def intersections(lim):
             sx, sy, _, _, distance = sensor
             if abs(sx - x) + abs(sy - y) <= distance:
                 answer = False
-                continue
+                break
         if answer:
             return (x, y)
 
