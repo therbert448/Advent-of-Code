@@ -3,23 +3,6 @@ Advent of Code
 2022 Day 16
 
 @author: Tom Herbert
-
-I'm pleased with this solution.
-Part One works out all the possible routes for a 30 min time limit and saves
-the flow for each route.
-
-Despite already having the function to save all the routes for a given time 
-limit, my initial approach to Part Two was very laborious; I spent too long
-trying the model the two parallel paths and whilst the code worked on the 
-example, the real input was far too large to produce a result in a reasonable
-amount of time.
-
-Eventually I realised that I could generate all the paths for the 26 min time
-limit, then go through the paths trying to find pairs that didn't share a stop,
-i.e. they could run in parallel independently.
-Then for all of these pairs of parallel paths, I just needed to find the max
-combined flow rate.
-This approach ended up being a lot quicker.
 """
 
 day = 16
