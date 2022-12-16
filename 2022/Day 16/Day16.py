@@ -23,9 +23,9 @@ def format_data():
         valves[valve] = {"rate": rate, "tunnels": tunnels, "routes": {}}
 
 def find_stops(): 
-    #Reduce all the valves down to only the ones with flow rates
-    #No point stopping and opening a valve if it has zero flow rate
-    #This list is all the valves that should be stopped at
+    # Reduce all the valves down to only the ones with flow rates
+    # No point stopping and opening a valve if it has zero flow rate
+    # This list is all the valves that should be stopped at
     global stops
     stops = []
     for valve, values in valves.items():
