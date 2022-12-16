@@ -50,6 +50,7 @@ def find_routes():
                         nextMoves.add(nextMove)
                 moves = nextMoves
                 steps += 1
+    stops.remove("AA")
 
 def open_state(openValves):
     opened = list(openValves)
@@ -57,7 +58,6 @@ def open_state(openValves):
     return openString
 
 def calculate_moves(path, opened, unopened, flow, time):
-    maxFlow = flow
     current = path
     for valve in unopened:
         nUnopened = list(unopened)
@@ -73,10 +73,7 @@ def calculate_moves(path, opened, unopened, flow, time):
         nOpened.append(valve)
         state = open_state(nOpened)
         states[state] = nFlow
-        nFlow = calculate_moves(nPath, nOpened, nUnopened, nFlow, tLeft)
-        if nFlow > maxFlow:
-            maxFlow = nFlow
-    return maxFlow
+        calculate_moves(nPath, nOpened, nUnopened, nFlow, tLeft)
 
 def find_path_pairs():
     best = max(state[1] for state in states)
@@ -111,8 +108,8 @@ def part_one():
     time = 30
     stateString = open_state(opened)
     states = {stateString: flow}
-    maxFlow = calculate_moves(path, opened, unopened, flow, time)
-    print(f"Part One = {maxFlow}")
+    calculate_moves(path, opened, unopened, flow, time)
+    print(f"Part One = {max(states.values())}")
 
 def part_two():
     global states
@@ -134,7 +131,6 @@ format_data()
 
 find_stops()
 find_routes()
-stops.remove("AA")
 
 part_one()
 part_two()
