@@ -89,10 +89,7 @@ def calculate_moves(path, opened, unopened, flow, time):
         nUnopened.remove(valve)
         nOpened.append(valve)
         state = open_state(nOpened)
-        if state in states and nFlow > states[state]:
-            states[state] = nFlow
-        elif state not in states:
-            states[state] = nFlow
+        states[state] = nFlow
         nFlow = calculate_moves(nPath, nOpened, nUnopened, nFlow, tLeft)
         if nFlow > maxFlow:
             maxFlow = nFlow
