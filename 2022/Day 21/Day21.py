@@ -26,107 +26,80 @@ def format_data(): #split monkeys into ones that shout and ones that wait
                 toYell[1] += toYell[1]
             operations[name] = [*toYell]
 
-def yell(name, operation): #if operation can be completed, update shouted
+def yell(name, operation): #if operation can be completed, update shouts
     a, op, b = operation
-    a, b = shouted[a], shouted[b]
+    if a in human or b in human:
+        human.add(name)
+        shouts[name] = "x"
+        return
+    a, b = shouts[a], shouts[b]
     operation = str(a) + op + str(b)
-    shouted[name] = eval(operation)
+    shouts[name] = eval(operation)
 
 def run_shouting(): #Get all monkeys to shout until root shouts
-    opsLeft = {k: v for k, v in operations.items()}
-    while end not in shouted:
-        newOpsLeft = {}
+    opsLeft = {**operations}
+    while end not in shouts:
+        shoutsLeft = {}
         for name, operation in opsLeft.items():
             a, _, b = operation
-            if a in shouted and b in shouted:
+            if a in shouts and b in shouts:
                 yell(name, operation)
                 if name == end:
                     break
             else:
-                newOpsLeft[name] = operation
-        opsLeft = {**newOpsLeft}
+                shoutsLeft[name] = operation
+        opsLeft = {**shoutsLeft}
 
-def reduce_equations(): #Find monkeys dependent on humn, for all other monkeys
-                        #calculate the number they will always shout
-    while len(newOps) < len(inputs):
-        for monkey in operations:
-            a, op, b = operations[monkey]
-            if (a in yelled or a in newOps) and (b in yelled or b in newOps):
-                a = yelled[a] if a in yelled else newOps[a] 
-                b = yelled[b] if b in yelled else newOps[b]
-                if monkey == end:
-                    newOps[monkey] = [a, b]
-                    break
-                else:
-                    newOps[monkey] = "".join(["(", str(a), op, str(b), ")"])
-                    if "x" in newOps[monkey]:
-                        human.add(monkey)
-                        newOps[monkey] = "x" 
-                        #just need to store it's dependent on x
-                    else:
-                        newOps[monkey] = eval(newOps[monkey])
-                        #evaluate the equation to store the result
-        if end in newOps:
-            break
-
-def find_x(monkey, x): #Run down from root, reversing operations to find x, the
-                       #number that humn has to shout
+def find_x(monkey, x = None): 
+    #Run down from root, reducing the x path down to x
     if monkey == "humn":
         return x
     if x == None: #Starting at root
         a, _, b = operations[monkey]
         if b in human: #find the side dependent on x
-            x = newOps[a] #the side that resolves becomes an estimate for x
-            down = b #the side that's dependent on x will be checked next
+            x = shouts[a] #the side that resolves becomes equivalent to x path
+            down = b      #this is the x path
         else:
-            x = newOps[b]
+            x = shouts[b]
             down = a
     else:
         a, op, b = operations[monkey]
-        if op == "//": #if op is division, the order matters
-            if b in human: #find the side dependent on x
-                down = b #if x is on the denominator
-                x = newOps[a]//x #rearrange equation
-            else: 
-                down = a
-                x *= newOps[b] #else just multiply
-        elif op == "-": #if op is subtraction, the order matters
-            if b in human: #find the side dependent on x
-                down = b
-                x = newOps[a] - x #rearrange the equation
-            else:
-                down = a
-                x += newOps[b] #else just add
-        else: #order doesn't matter for + and *
-            if b in human: #find the side dependent on x
-                down = b
-                y = newOps[a]
-            else:
-                down = a
-                y = newOps[b]
-            if op == "+":
-                x -= y
-            elif op == "*":
-                x = x//y
+        if b in human: #find the side dependent on x
+            y = shouts[a] #the side that resolves becomes equivalent to x path
+            down = b      #this is the x path
+            if op == "//": #x path is denominator
+                x = y//x #rearrange equation
+            elif op == "-": #x path is being subtracted from a
+                x = y - x #rearrange the equation
+        else:
+            y = shouts[b]
+            down = a
+            if op == "//": #x path is numerator
+                x *= y #just multiply
+            elif op == "-": #x path is having b subtracted from it 
+                x += y #just add
+        if op == "+": #order doesn't matter
+            x -= y
+        elif op == "*": #order doesn't matter
+            x = x//y
     x = find_x(down, x)
     return x
 
 def part_one():
-    global shouted
-    shouted = {k: v for k, v in yelled.items()}
+    global shouts, human
+    shouts = {**yelled}
+    human = set()
     run_shouting()
-    print(f"Part One = {shouted[end]}")
+    print(f"Part One = {shouts[end]}")
 
 def part_two():
-    global newOps, human
-    newOps = {**yelled}
-    human = set()
+    global shouts, human
     yelled["humn"] = "x"
-    reduce_equations()
-    x = None
-    x = find_x(end, x)
+    shouts = {**yelled}
+    human = {"humn"}
+    run_shouting()
+    x = find_x(end)
     print(f"Part Two = {x}")
-    
 
 inputs = open_file()
 
