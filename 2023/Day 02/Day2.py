@@ -8,27 +8,26 @@ Advent of Code
 day = 2
 
 def open_file(day):
-    #filename = "test.txt"
     filename = "Day" + str(day) + "inputs.txt"
     with open(filename) as file:
         inputs = [line.strip() for line in file.readlines()]
     return inputs
 
 def read_games(inputs):
-    games = {}
+    idcs = ["red", "green", "blue"]
+    games = []
     for line in inputs:
         gameID, sets = line.split(": ")
         _, gameID = gameID.split(" ")
         sets = sets.split("; ")
-        setList = []
+        game = [0, 0, 0]
         for s in sets:
-            balls = s.split(", ")
-            ballsDict = {}
-            for ball in balls:
-                num, colour = ball.split(" ")
-                ballsDict[colour] = int(num)
-            setList.append(ballsDict)
-        games[int(gameID)] = setList
+            cubes = s.split(", ")
+            for cube in cubes:
+                num, colour = cube.split(" ")
+                if int(num) > game[idcs.index(colour)]:
+                    game[idcs.index(colour)] = int(num)
+        games.append(game)
     return games
 
 def product(args):
@@ -39,34 +38,21 @@ def product(args):
 
 def part_one(games, limits):
     total = 0
-    for gameID, game in games.items():
-        valid = True
-        for gameSet in game:
-            for colour, num in gameSet.items():
-                if num > limits[colour]:
-                    valid = False
-                    break
-            if not valid:
-                break
-        if valid: total += gameID
+    for i, game in enumerate(games):
+        if all([game[j] <= limits[j] for j in range(len(game))]):
+            total += i + 1
     print(f"Part One = {total}")
 
 def part_two(games):
     total = 0
-    for game in games.values():
-        minBalls = {"red": 0, "green": 0, "blue": 0}
-        for gameSet in game:
-            for colour, num in gameSet.items():
-                if num > minBalls[colour]:
-                    minBalls[colour] = num
-        power = product(list(minBalls.values()))
-        total += power
+    for game in games:
+        total += product(game)
     print(f"Part Two = {total}")
 
 inputs = open_file(day)
 games = read_games(inputs)
 
-limits = {"red": 12, "green": 13, "blue": 14}
+limits = [12, 13, 14]
 
 part_one(games, limits)
 part_two(games)
