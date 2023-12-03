@@ -25,7 +25,7 @@ def parse_file(inputs):
                     nums[(start, y)] = string
                     string, start = "", None
             elif char.isnumeric():
-                if not start:
+                if start = None:
                     start = x
                 string += char
             else:
