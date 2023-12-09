@@ -22,23 +22,12 @@ def find_next(sequence):
     else:
         return sequence[-1]
 
-def find_first(sequence):
-    newSequence = [sequence[i+1] - sequence[i] for i in range(len(sequence)-1)]
-    if any(newSequence):
-        subtract = find_first(newSequence)
-        return sequence[0] - subtract
-    else:
-        return sequence[0]
-
-def part_one(sequences):
+def part_one_and_two(sequences):
     total = sum([find_next(sequence) for sequence in sequences])
     print(f"Part One = {total}")
-
-def part_two(sequences):
-    total = sum([find_first(sequence) for sequence in sequences])
+    total = sum([find_next(sequence[::-1]) for sequence in sequences])
     print(f"Part Two = {total}")
 
 sequences = open_file(day)
 
-part_one(sequences)
-part_two(sequences)
+part_one_and_two(sequences)
