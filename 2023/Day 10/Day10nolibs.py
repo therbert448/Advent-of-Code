@@ -55,12 +55,10 @@ def enclosed(path, pipes, xMax, yMax):
                 continue
             if x in (0, xMax) or y in (0, yMax):
                 continue
-            if (x+1, y) not in inner and (x+1, y) not in path:
-                continue
-            if (x, y-1) not in inner and (x, y-1) not in path:
-                continue
             if (x+1, y) in inner or (x, y-1) in inner:
                 inner.add((x, y))
+                continue
+            if (x+1, y) not in path or (x, y-1) not in path:
                 continue
             string = ""
             for xi in range(x+1, xMax+1):
