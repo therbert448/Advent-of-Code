@@ -8,7 +8,6 @@ Advent of Code
 day = 10
 
 def open_file(day):
-    #filename = "test7.txt"
     filename = "Day" + str(day) + "inputs.txt"
     with open(filename) as file:
         inputs = [line.strip() for line in file.readlines()]
@@ -36,38 +35,32 @@ def navigate(ps, start, ms, sides):
     paths = [step(start, d, ps, ms) for d in ds if step(start, d, ps, ms)]
     dires = tuple(sorted([d for d in ds if step(start, d, ps, ms)]))
     ps[start] = sides[dires]
-    pathSet = [set((path[0],)) for path in paths]
-    order = [paths[0][0], start, paths[1][0]]
-    crossed = False
-    while not crossed:
-        newPaths = []
-        for i, path in enumerate(paths):
-            nextPath = step(*path, pipes, moves)
-            pathSet[i].add(nextPath[0])
-            if i:
-                order.append(nextPath[0])
-            else:
-                order.insert(0, nextPath[0])
-            newPaths.append(nextPath)
-        if pathSet[0] & pathSet[1]:
-            crossed = True
-            return len(pathSet[0]), order[1:], ps
-        paths = newPaths
+    order = [start, paths[0][0]]
+    dire = paths[0][1]
+    ended = False
+    while not ended:
+        current = order[-1]
+        nextPos, dire = step(current, dire, pipes, moves)
+        if nextPos == start:
+            ended = True
+            return order, ps
+        order.append(nextPos)
 
 def enclosed(path, pipes, xMax, yMax):
-    closedPoints, openPoints = set(), set()
+    inner = set()
     for y in range(yMax+1):
         for x in range(xMax+1):
+            x = xMax - x
             if (x, y) in path:
                 continue
             if x in (0, xMax) or y in (0, yMax):
-                openPoints.add((x, y))
                 continue
-            if (x-1, y) in openPoints or (x, y-1) in openPoints:
-                openPoints.add((x, y))
+            if (x+1, y) not in inner and (x+1, y) not in path:
                 continue
-            if (x-1, y) in closedPoints or (x, y-1) in closedPoints:
-                closedPoints.add((x, y))
+            if (x, y-1) not in inner and (x, y-1) not in path:
+                continue
+            if (x+1, y) in inner or (x, y-1) in inner:
+                inner.add((x, y))
             string = ""
             for xi in range(x+1, xMax+1):
                 if (xi, y) in path:
@@ -75,12 +68,12 @@ def enclosed(path, pipes, xMax, yMax):
                         string += pipes[(xi, y)]
             string = string.replace('L7', '|').replace('FJ', '|')
             if string.count('|') % 2:
-                closedPoints.add((x, y))
-    return len(closedPoints)
+                inner.add((x, y))
+    return len(inner)
 
 def part_one(pipes, start, moves, sides):
-    result, path, pipes = navigate(pipes, start, moves, sides)
-    print(f"Part One = {result}")
+    path, pipes = navigate(pipes, start, moves, sides)
+    print(f"Part One = {len(path)//2}")
     return path, pipes
 
 def part_two(path, pipes, x, y):
@@ -97,4 +90,4 @@ sides = {('left', 'right'): '-', ('down', 'up'): '|', ('left', 'up'): 'J',
 pipes, start, x, y = open_file(day)
 
 path, pipes = part_one(pipes, start, moves, sides)
-part_two(path, pipes, x, y)
+part_two(set(path), pipes, x, y)
