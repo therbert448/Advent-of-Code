@@ -61,6 +61,7 @@ def enclosed(path, pipes, xMax, yMax):
                 continue
             if (x+1, y) in inner or (x, y-1) in inner:
                 inner.add((x, y))
+                continue
             string = ""
             for xi in range(x+1, xMax+1):
                 if (xi, y) in path:
