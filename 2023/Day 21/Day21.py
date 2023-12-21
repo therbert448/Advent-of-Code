@@ -3,6 +3,11 @@ Advent of Code
 2023 Day 21
 
 @author: Tom Herbert
+
+After determining quadratic relationship (using Day 9 logic), use polyfit to
+extrapolate the result.
+Invert matrix and multiply matrix functions lifted from the algorithms I
+developed for polyfitting at work
 """
 
 day = 21

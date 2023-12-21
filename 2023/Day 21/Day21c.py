@@ -3,6 +3,8 @@ Advent of Code
 2023 Day 21
 
 @author: Tom Herbert
+
+My initial approach, working out the tile variants and adding them together
 """
 
 day = 21
@@ -51,21 +53,19 @@ def steps(N, start, extend=False):
     else:
         return len(even)
 
-def part_one(N):
-    start = (width//2, width//2)
-    result = steps(N, start)
-    print(f"Part One = {result}")
-
-def part_two(N = 26501365):
+def solve_steps(N):
     w = width
-    repTiles = N//w
-    corners = [(w-1, (0, w//2)), (w-1, (w//2, 0)),
-             (w-1, (w-1, w//2)), (w-1, (w//2, w-1))]
-    odds = [(w//2 - 1, (0, 0)), (w//2 - 1, (w-1, w-1)), 
-            (w//2 - 1, (0, w-1)), (w//2 - 1, (w-1, 0))]
-    evens = [(int(1.5*w)-1, (0, w-1)), (int(1.5*w)-1, (w-1, 0)),
-             (int(1.5*w)-1, (0, 0)), (int(1.5*w)-1, (w-1, w-1))]
     start = (w//2, w//2)
+    if N <= w:
+        return steps(N, start, True)
+    repTiles = N//w
+    rem = N % w
+    corners = [(w//2 + rem, (0, w//2)), (w//2 + rem, (w//2, 0)),
+             (w//2 + rem, (w-1, w//2)), (w//2 + rem, (w//2, w-1))]
+    odds = [(rem-1, (0, 0)), (rem-1, (w-1, w-1)), 
+            (rem-1, (0, w-1)), (rem-1, (w-1, 0))]
+    evens = [(w + rem - 1, (0, w-1)), (w + rem - 1, (w-1, 0)),
+             (w + rem - 1, (0, 0)), (w + rem - 1, (w-1, w-1))]
     fullOdd, fullEven = steps(w, start), steps(w-1, start)
     cornerScores = [steps(*tup) for tup in corners]
     oddScores = [steps(*tup) for tup in odds]
@@ -76,7 +76,15 @@ def part_two(N = 26501365):
     cornerEdges = sum(cornerScores)
     oddEdges = repTiles * sum(oddScores)
     evenEdges = (repTiles-1)*sum(evenScores)
-    result = middle + cornerEdges + oddEdges + evenEdges
+    return middle + cornerEdges + oddEdges + evenEdges
+
+def part_one(N):
+    start = (width//2, width//2)
+    result = steps(N, start)
+    print(f"Part One = {result}")
+
+def part_two(N = 26501365):
+    result = solve_steps(N)
     print(f"Part Two = {result}")
 
 rocks, width = open_file(day)

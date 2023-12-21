@@ -4,12 +4,13 @@ Advent of Code
 
 @author: Tom Herbert
 
-Solves the simultaneous quadratic equations using a few formulae
+Using sequences from Day 9
 """
 
 day = 21
 
 def open_file(day):
+    #filename = "test.txt"
     filename = "Day" + str(day) + "inputs.txt"
     with open(filename) as file:
         inputs = [line.strip() for line in file.readlines()]
@@ -18,12 +19,10 @@ def open_file(day):
         for x, char in enumerate(line):
             if char == "#":
                 rocks.add((x, y))
-            if char == "S":
-                start = (x, y)
     width = x
-    return rocks, start, width+1
+    return rocks, width+1
 
-def steps(N, extend=False):
+def steps(N, start, extend=False):
     current = [start]
     even, odd = {start,}, set()
     for i in range(N):
@@ -55,26 +54,29 @@ def steps(N, extend=False):
     else:
         return len(even)
 
-def quadratic(repTiles, rem):
-    y = [steps(rem, True), steps(rem+width, True), steps(rem+2*width, True)]
-    x = [0, 1, 2]
-    c = (y[2] - 2*y[1] + y[0])//(x[2]**2 - 2 * (x[1]**2) + x[0]**2)
-    b = y[2] - y[1] - c * (x[2]**2 - x[1]**2)
-    a = y[0] - b * x[0] - c * x[0]**2
-    result = a + b * repTiles + c * repTiles ** 2
-    return result
-
 def part_one(N):
-    result = steps(N, width)
+    start = (width//2, width//2)
+    result = steps(N, start)
     print(f"Part One = {result}")
 
 def part_two(N = 26501365):
-    repeatedTiles = N//width
-    remainder = N % width
-    result = quadratic(repeatedTiles, remainder)
-    print(f"Part Two = {result}")
+    start = (width//2, width//2)
+    rem = N % width
+    Ncheck = 4
+    xs = [rem + i*width for i in range(Ncheck)]
+    y = [steps(x, start, True) for x in xs]
+    dy = [y[i+1]-y[i] for i in range(Ncheck-1)]
+    dy2 = [dy[i+1]-dy[i] for i in range(Ncheck-2)]
+    if dy2[0] == dy2[1]: #Quadratic relationship
+        repTiles = N//width
+        leftover = repTiles - Ncheck + 1
+        y, dy, dy2 = y[-1], dy[-1], dy2[-1]
+        for _ in range(leftover):
+            dy += dy2
+            y += dy
+    print(f"Part Two = {y}")
 
-rocks, start, width = open_file(day)
+rocks, width = open_file(day)
 
 part_one(64)
 part_two()
