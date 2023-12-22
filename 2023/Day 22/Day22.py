@@ -23,22 +23,22 @@ class Brick:
         return coords
     
     def settle(self):
-        cs = self.get_coords()
-        for c in cs:
-            del grid[c]
+        coords = self.get_coords()
+        for c in coords:
+            del grid[c] #Remove current brick from grid, so it doesn't block itself
         while not self.settled:
-            cs = self.get_coords()
-            if self.z1 == 1:
+            coords = self.get_coords()
+            if self.z1 == 1: #Brick is on the floor, can't settle any more
                 self.settled = True
-            elif any([(x, y, z-1) in grid for x, y, z in cs]):
+            elif any((x, y, z-1) in grid for x, y, z in coords): #There is a brick below it
                 self.settled = True
             else:
                 self.z1 -= 1
                 self.z2 -= 1
-        for c in cs:
-            grid[c] = self.ID
+        for c in coords:
+            grid[c] = self.ID #Put current brick back into the grid
 
-    def find_below(self):
+    def find_below(self): #Find the brick IDs for all bricks the current brick is resting on
         self.below = set()
         coords = self.get_coords()
         z = min(c[2] for c in coords)
@@ -46,7 +46,7 @@ class Brick:
             if (x, y, z-1) in grid:
                 self.below.add(grid[(x, y, z-1)])
 
-    def find_above(self):
+    def find_above(self): #Find the brick IDs for all bricks being supported by current brick
         self.above = set()
         coords = self.get_coords()
         z = max(c[2] for c in coords)
@@ -54,7 +54,7 @@ class Brick:
             if (x, y, z+1) in grid:
                 self.above.add(grid[(x, y, z+1)])
     
-    def collapse_above(self):
+    def collapse_above(self): #Remove given brick and cascade through to other supported bricks
         cascade = {self.ID,}
         toCheck = self.above
         while toCheck:
@@ -79,19 +79,19 @@ def open_file(day):
 def get_grid(bricks):
     grid = {}
     for brick in bricks.values():
-        cs = brick.get_coords()
-        for c in cs:
+        coords = brick.get_coords()
+        for c in coords:
             grid[c] = brick.ID
     return grid
 
 def part_one():
     ordered = sorted(bricks.values(), key = lambda b: b.z1)
-    for brick in ordered: brick.settle()
+    for brick in ordered: brick.settle() #Settle all the bricks, starting with the lowest ones
     for brick in bricks.values(): brick.find_below()
     supporting = set()
     for brick in bricks.values():
-        if len(brick.below) == 1:
-            supporting.update(brick.below)
+        if len(brick.below) == 1: #Only one support, so will collapse if the support collapses
+            supporting.update(brick.below) #Keep a set of bricks that can't be moved
     disintegrate = len(bricks) - len(supporting)
     print(f"Part One = {disintegrate}")
 
